@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Media Library | Student Sahayak CMS</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #045c4b;
+        --bg: #f4f7f5;
+        --text: #333;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      body {
+        display: flex;
+        height: 100vh;
+        background-color: var(--bg);
+        color: var(--text);
+        overflow: hidden;
+      }
+
+      .sidebar {
+        width: 260px;
+        background: white;
+        border-right: 1px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+      }
+      .brand {
+        padding: 1.5rem;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--primary);
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .nav-menu {
+        padding: 1rem 0;
+        flex: 1;
+        overflow-y: auto;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        color: #555;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.2s;
+      }
+      .nav-item i {
+        width: 24px;
+        font-size: 1.1rem;
+        margin-right: 8px;
+      }
+      .nav-item:hover,
+      .nav-item.active {
+        background: #e6f7f3;
+        color: var(--primary);
+        border-right: 4px solid var(--primary);
+      }
+      .logout-btn {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #e0e0e0;
+        cursor: pointer;
+        color: #d32f2f;
+        font-weight: 600;
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+      }
+      .logout-btn i {
+        width: 24px;
+        font-size: 1.1rem;
+        margin-right: 8px;
+      }
+      .logout-btn:hover {
+        background: #fdf0f0;
+      }
+
+      .main-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .topbar {
+        background: white;
+        padding: 1.25rem 2rem;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .main-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .upload-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+      }
+      .upload-area {
+        border: 2px dashed #ccc;
+        padding: 2rem;
+        text-align: center;
+        border-radius: 8px;
+      }
+      .btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+      .media-item {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border: 1px solid #eee;
+      }
+      .media-preview {
+        height: 150px;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .media-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .media-preview i {
+        font-size: 3rem;
+        color: #999;
+      }
+      .media-info {
+        padding: 1rem;
+        font-size: 0.85rem;
+        word-break: break-all;
+      }
+      .copy-btn {
+        width: 100%;
+        padding: 0.5rem;
+        background: #e0f2f1;
+        color: var(--primary);
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .copy-btn:hover {
+        background: #b2dfdb;
+      }
+      .delete-btn {
+        background: #d32f2f;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .delete-btn:hover {
+        background: #b71c1c;
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand"><i class="fa-solid fa-pen-nib"></i> CMS Admin</div>
+      <div class="nav-menu">
+        <div id="managerNav">
+          <a href="manage-users.html" class="nav-item"
+            ><i class="fa-solid fa-users-gear"></i> Manage Users</a
+          >
+        </div>
+        <a href="dashboard.html" class="nav-item"
+          ><i class="fa-solid fa-chart-line"></i> Dashboard</a
+        >
+        <div id="articlesNav">
+          <a href="create-article.html" class="nav-item"
+            ><i class="fa-solid fa-file-circle-plus"></i> Create Article</a
+          >
+          <a href="all-articles.html" class="nav-item"
+            ><i class="fa-solid fa-list"></i> All Articles</a
+          >
+        </div>
+        <div id="chaptersNav">
+          <a href="create-chapter.html" class="nav-item"
+            ><i class="fa-solid fa-book-open"></i> Create Chapter</a
+          >
+          <a href="all-chapters.html" class="nav-item"
+            ><i class="fa-solid fa-layer-group"></i> All Chapters</a
+          >
+        </div>
+        <a href="media-library.html" class="nav-item active"
+          ><i class="fa-solid fa-images"></i> Media Library</a
+        >
+        <div
+          style="
+            margin-top: 1rem;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+          "
+        >
+          <a href="profile.html" class="nav-item"
+            ><i class="fa-solid fa-user"></i> My Profile</a
+          >
+        </div>
+      </div>
+      <div class="logout-btn" id="logoutBtn">
+        <i class="fa-solid fa-right-from-bracket"></i> Sign out
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header class="topbar">
+        <h2>Media Storage</h2>
+        <div style="font-weight: 600">
+          Welcome back, <span id="userName">Admin</span>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <!-- The upload section is given an ID so we can hide it via JS -->
+        <div class="upload-card" id="uploadSection">
+          <h2 style="color: var(--primary); margin-bottom: 1rem">
+            Upload New Media
+          </h2>
+          <div class="upload-area">
+            <form id="uploadForm">
+              <input
+                type="file"
+                id="mediaFile"
+                name="mediaFile"
+                accept="image/*,.pdf"
+                required
+                style="
+                  margin-bottom: 1rem;
+                  display: block;
+                  margin-left: auto;
+                  margin-right: auto;
+                "
+              />
+              <button type="submit" class="btn" id="uploadBtn">
+                Upload File
+              </button>
+              <div
+                id="uploadStatus"
+                style="margin-top: 1rem; font-weight: bold"
+              ></div>
+            </form>
+          </div>
+        </div>
+
+        <h3 style="color: #555">Media Gallery</h3>
+        <div class="gallery-grid" id="galleryGrid">
+          <p>Loading media...</p>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("cms_user"));
+      if (!user) window.location.href = "/admin/index.html";
+      document.getElementById("userName").textContent = user.first_name;
+
+      // Define who can upload/delete media. Add other roles here if you want to grant them access later.
+      const allowedUploadRoles = ["CEO", "Manager"];
+      const canManageMedia = allowedUploadRoles.includes(user.role_name);
+
+      // Hide upload section if they don't have permission
+      if (!canManageMedia) {
+        document.getElementById("uploadSection").style.display = "none";
+      }
+
+      // Standard Sidebar Navigation RBAC
+      const articleRoles = [
+        "CEO",
+        "Manager",
+        "Content Manager & Editor",
+        "Proofreader",
+        "Article Writer",
+      ];
+      const chapterRoles = [
+        "CEO",
+        "Manager",
+        "Content Manager & Editor",
+        "Educational Content Writer",
+      ];
+      if (
+        document.getElementById("articlesNav") &&
+        !articleRoles.includes(user.role_name)
+      )
+        document.getElementById("articlesNav").style.display = "none";
+      if (
+        document.getElementById("chaptersNav") &&
+        !chapterRoles.includes(user.role_name)
+      )
+        document.getElementById("chaptersNav").style.display = "none";
+      if (
+        document.getElementById("managerNav") &&
+        !["CEO", "Manager"].includes(user.role_name)
+      )
+        document.getElementById("managerNav").style.display = "none";
+
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async () => {
+          await fetch("/api/auth/logout", {
+            method: "POST",
+            credentials: "include",
+          });
+          localStorage.removeItem("cms_user");
+          window.location.href = "/admin/index.html";
+        });
+
+      const uploadForm = document.getElementById("uploadForm");
+      const uploadStatus = document.getElementById("uploadStatus");
+      const galleryGrid = document.getElementById("galleryGrid");
+
+      // Handle Upload (Only runs if the form is visible to them)
+      if (uploadForm) {
+        uploadForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const fileInput = document.getElementById("mediaFile");
+          const formData = new FormData();
+          formData.append("mediaFile", fileInput.files[0]);
+
+          const btn = document.getElementById("uploadBtn");
+          btn.disabled = true;
+          btn.textContent = "Uploading...";
+
+          try {
+            const response = await fetch("/api/media/upload", {
+              method: "POST",
+              body: formData,
+              credentials: "include",
+            });
+            const data = await response.json();
+            if (response.ok) {
+              uploadStatus.style.color = "green";
+              uploadStatus.textContent = "Uploaded successfully!";
+              uploadForm.reset();
+              loadMedia();
+            } else {
+              uploadStatus.style.color = "red";
+              uploadStatus.textContent = data.error || "Upload failed.";
+            }
+          } catch (err) {
+            uploadStatus.style.color = "red";
+            uploadStatus.textContent = "Network error.";
+          }
+          btn.disabled = false;
+          btn.textContent = "Upload File";
+        });
+      }
+
+      async function loadMedia() {
+        try {
+          const response = await fetch("/api/media", {
+            credentials: "include",
+          });
+          if (response.status === 401) {
+            window.location.href = "/admin/index.html";
+            return;
+          }
+          const mediaFiles = await response.json();
+          galleryGrid.innerHTML = "";
+
+          if (mediaFiles.length === 0) {
+            galleryGrid.innerHTML = "<p>No files uploaded yet.</p>";
+            return;
+          }
+
+          mediaFiles.forEach((file) => {
+            const isPdf = file.file_type === "application/pdf";
+            const previewHtml = isPdf
+              ? '<i class="fa-solid fa-file-pdf" style="color: #d32f2f;"></i>'
+              : `<img src="${file.file_path}" alt="${file.file_name}">`;
+
+            // Conditionally render the delete button based on permissions
+            const deleteButtonHtml = canManageMedia
+              ? `<button class="delete-btn" onclick="deleteMedia(${file.id})" title="Delete File"><i class="fa-solid fa-trash"></i></button>`
+              : "";
+
+            const item = document.createElement("div");
+            item.className = "media-item";
+            item.innerHTML = `
+                <div class="media-preview">${previewHtml}</div>
+                <div class="media-info">${file.file_name}</div>
+                <div style="display: flex; gap: 0.5rem; padding: 0 1rem 1rem 1rem;">
+                    <button class="copy-btn" style="flex: 1;" onclick="copyToClipboard('${file.file_path}')">Copy URL</button>
+                    ${deleteButtonHtml}
+                </div>
+            `;
+            galleryGrid.appendChild(item);
+          });
+        } catch (err) {
+          galleryGrid.innerHTML =
+            '<p style="color:red;">Error loading gallery.</p>';
+        }
+      }
+
+      async function deleteMedia(id) {
+        if (
+          !confirm(
+            "Are you sure you want to permanently delete this file? This will break any articles currently using it.",
+          )
+        )
+          return;
+        try {
+          const response = await fetch(`/api/media/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          if (response.ok) {
+            loadMedia();
+          } else {
+            alert("Failed to delete media.");
+          }
+        } catch (err) {
+          alert("Network error.");
+        }
+      }
+
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert("URL copied to clipboard: " + text);
+        });
+      }
+
+      loadMedia();
+    </script>
+  </body>
+</html>

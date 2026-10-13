@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= chapter.seo_title || chapter.title %> | Student Sahayak</title>
+    <meta name="description" content="<%= chapter.meta_description %>" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/assets/header-footer-styles.css" />
+
+    <!-- Using inline CSS to guarantee rendering for the preview -->
+    <style>
+      :root {
+        --primary: #00796b;
+        --primary-dark: #005a4f;
+        --primary-light: #e0f2f1;
+        --accent: #f57c00;
+        --surface: #ffffff;
+        --bg: #f4f6f8;
+        --text: #212121;
+        --text-muted: #5f6368;
+        --border: #e0e0e0;
+        --radius: 10px;
+      }
+      body {
+        font-family: "Source Sans 3", sans-serif;
+        color: var(--text);
+        background-color: var(--bg);
+        line-height: 1.75;
+        margin: 0;
+      }
+      .container {
+        max-width: 1140px;
+        margin: 0 auto;
+        padding: 0 1.25rem;
+      }
+      .page-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 1.5rem 0 3rem;
+      }
+      @media (min-width: 992px) {
+        .page-layout {
+          grid-template-columns: minmax(0, 1fr) 300px;
+        }
+        .sidebar {
+          display: block;
+        }
+      }
+      .sidebar {
+        display: none;
+      }
+
+      .chapter-hero {
+        background: linear-gradient(
+          135deg,
+          #004d40 0%,
+          #00796b 60%,
+          #26a69a 100%
+        );
+        color: white;
+        padding: 2.5rem 1.25rem;
+      }
+      .chapter-hero h1 {
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        font-weight: 700;
+        margin: 0;
+      }
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 0.5rem;
+      }
+      .hero-meta span {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 20px;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.82rem;
+      }
+
+      .card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        padding: 1.75rem;
+        margin-bottom: 1.5rem;
+      }
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--primary-light);
+      }
+      .card-header h2 {
+        font-size: 1.2rem;
+        color: var(--text);
+        margin: 0;
+      }
+
+      /* Dynamic Content Styles */
+      .qa-item {
+        margin-bottom: 1.5rem;
+      }
+      .question-text {
+        background: #e3f2fd;
+        border-left: 4px solid #1565c0;
+        padding: 0.9rem 1rem;
+        font-weight: 600;
+        color: #0d3c7a;
+        margin-bottom: 0.6rem;
+        border-radius: 0 8px 8px 0;
+      }
+      .answer-text {
+        padding: 0 0 0 1rem;
+        border-left: 3px solid var(--border);
+        line-height: 1.8;
+      }
+      .sidebar-toc {
+        position: sticky;
+        top: 20px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 1.25rem;
+        border-radius: var(--radius);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header-inner">
+      <div
+        class="container"
+        style="display: flex; align-items: center; height: 70px"
+      >
+        <h1 style="color: #045c4b; font-size: 24px">Student Sahayak</h1>
+      </div>
+    </header>
+
+    <div class="chapter-hero">
+      <div class="container">
+        <h1><%= chapter.title %></h1>
+        <p>
+          Chapter <%= chapter.chapter_number %> | <%= chapter.board_name %> |
+          <%= chapter.class_name %> <%= chapter.subject_name %>
+        </p>
+        <div class="hero-meta">
+          <span
+            ><i class="fa-solid fa-graduation-cap"></i> <%= chapter.class_name
+            %></span
+          >
+          <span
+            ><i class="fa-solid fa-book"></i> <%= chapter.subject_name %></span
+          >
+          <span><i class="fa-solid fa-clock"></i> Updated 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="page-layout">
+        <main class="main-content">
+          <!-- The structured JSON from the database is injected here -->
+          <%- contentHtml %>
+        </main>
+
+        <aside class="sidebar">
+          <div class="sidebar-toc">
+            <h3>📋 Quick Navigation</h3>
+            <a href="#">Table of Contents</a>
+            <a href="#">Textbook Q&A</a>
+            <a href="#">MCQs</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </body>
+</html>

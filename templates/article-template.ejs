@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta name="google-adsense-account" content="ca-pub-5334244832658429" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5334244832658429"
+      crossorigin="anonymous"
+    ></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title><%= article.seo_title || article.title %> | Student Sahayak</title>
+    <meta name="description" content="<%= article.meta_description %>" />
+    <link
+      rel="canonical"
+      href="https://www.studentsahayak.online/articles/<%= article.category %>/<%= article.slug %>.html"
+    />
+
+    <meta
+      property="og:title"
+      content="<%= article.seo_title || article.title %>"
+    />
+    <meta property="og:description" content="<%= article.meta_description %>" />
+    <meta property="og:image" content="<%= article.featured_image_url %>" />
+    <meta property="og:type" content="article" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/assets/header-footer-styles.css" />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #f4f7f5;
+        color: #1e1e1e;
+        line-height: 1.9;
+        font-family: Arial, sans-serif;
+      }
+      a {
+        text-decoration: none;
+        color: #056b57;
+      }
+      img {
+        max-width: 100%;
+      }
+      .topbar {
+        background: #045c4b;
+        color: white;
+        text-align: center;
+        padding: 12px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .header {
+        background: white;
+        border-bottom: 2px solid #056b57;
+        padding: 18px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .logo img {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+      }
+      .logo h1 {
+        color: #045c4b;
+        font-size: 30px;
+        font-weight: 800;
+      }
+      .nav {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .nav a {
+        color: #222;
+        font-weight: 600;
+      }
+      .containers {
+        width: 92%;
+        max-width: 1450px;
+        margin: 28px auto;
+        display: grid;
+        grid-template-columns: 2.4fr 1fr;
+        gap: 28px;
+      }
+      .content {
+        background: white;
+        padding: 35px;
+        border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      }
+      .breadcrumbs {
+        font-size: 14px;
+        margin-bottom: 18px;
+        color: #666;
+      }
+      .category {
+        display: inline-block;
+        margin-bottom: 12px;
+        color: #d35400;
+        font-weight: 700;
+      }
+      .article-title {
+        font-size: 46px;
+        line-height: 1.2;
+        margin-bottom: 20px;
+        color: #111;
+        font-weight: 800;
+      }
+      .article-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+        padding: 14px 0;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 28px;
+        color: #555;
+      }
+      .banner {
+        width: 100%;
+        height: 430px;
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        padding: 25px;
+      }
+      .intro {
+        font-size: 19px;
+        color: #333;
+        margin-bottom: 22px;
+      }
+      .content h2 {
+        font-size: 35px;
+        margin-top: 48px;
+        margin-bottom: 16px;
+        color: #045c4b;
+      }
+      .content h3 {
+        font-size: 26px;
+        margin-top: 30px;
+        margin-bottom: 14px;
+        color: #222;
+      }
+      .content p {
+        margin-bottom: 18px;
+        font-size: 18px;
+        color: #333;
+      }
+      .highlight-box {
+        background: #fff7eb;
+        border-left: 5px solid #e67e22;
+        padding: 24px;
+        border-radius: 12px;
+        margin: 28px 0;
+      }
+      .table-style {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 30px 0;
+      }
+      .table-style th,
+      .table-style td {
+        border: 1px solid #ddd;
+        padding: 14px;
+        text-align: left;
+      }
+      .table-style th {
+        background: #045c4b;
+        color: white;
+      }
+      .author-box {
+        background: #f8fbfa;
+        border: 1px solid #dfeee8;
+        padding: 26px;
+        border-radius: 12px;
+        margin-top: 40px;
+      }
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        position: sticky;
+        top: 20px;
+        align-self: start;
+      }
+      .widget {
+        background: white;
+        padding: 24px;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .widget h3 {
+        color: #045c4b;
+        margin-bottom: 16px;
+        font-size: 24px;
+      }
+      .widget ul {
+        padding-left: 18px;
+      }
+      .widget li {
+        margin-bottom: 12px;
+      }
+      @media (max-width: 1000px) {
+        .containers {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: static;
+        }
+        .article-title {
+          font-size: 35px;
+        }
+        .banner {
+          height: 320px;
+        }
+      }
+      @media (max-width: 600px) {
+        .content {
+          padding: 22px;
+        }
+        .article-title {
+          font-size: 28px;
+        }
+        .content h2 {
+          font-size: 28px;
+        }
+        .content p,
+        .content li {
+          font-size: 17px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="topbar">📢 Student Sahayak Academic Desk Updates</div>
+
+    <header class="header">
+      <div class="logo">
+        <h1>Student Sahayak</h1>
+      </div>
+      <nav class="nav">
+        <a href="#">Home</a>
+        <a href="#">Exam Corner</a>
+        <a href="#">Study Tips</a>
+      </nav>
+    </header>
+
+    <div class="containers">
+      <main class="content">
+        <div class="breadcrumbs">
+          Home / Study Tips / <%= article.category %>
+        </div>
+
+        <span class="category"><%= article.category.toUpperCase() %></span>
+
+        <h1 class="article-title"><%= article.title %></h1>
+
+        <div class="article-meta">
+          <div>
+            <strong>By <%= authorName %></strong> | Reviewed by Student Sahayak
+            Mentors
+          </div>
+          <div>Updated: <%= formattedDate %></div>
+        </div>
+
+        <div
+          class="banner"
+          style="
+            background:
+              linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+              url(&quot;<%= article.featured_image_url %>&quot;) center/cover;
+          "
+        ></div>
+
+        <%- contentHtml %>
+
+        <div class="author-box">
+          <h2>About the Author</h2>
+          <p>This article was prepared by <%= authorName %>.</p>
+        </div>
+      </main>
+
+      <aside class="sidebar">
+        <div class="widget">
+          <h3>Trending Student Searches</h3>
+          <ul>
+            <li><a href="#">NEET 2026 Expected Cut-Off</a></li>
+            <li><a href="#">Best Books for Organic Chemistry</a></li>
+            <li><a href="#">Daily Routine of NEET Toppers</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </body>
+</html>
