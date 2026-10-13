@@ -1,3 +1,6 @@
+require("dotenv").config(); // Must be at the very top
+const mysql = require("mysql2/promise");
+
 const bcrypt = require("bcryptjs");
 const db = require("./config/db");
 
