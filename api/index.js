@@ -1,3 +1,6 @@
+const express = require("express");
+const app = express(); // Must be declared before app.use() or app.get()
+
 const path = require("path");
 
 // Ensure your static middleware points correctly out of the api folder into root's public folder:
