@@ -1,4 +1,4 @@
-const app = require("../server.js"); // Point to your existing main server file
+const path = require("path");
 
-// Export the app as a serverless function handler for Vercel
-module.exports = app;
+// Ensure your static middleware points correctly out of the api folder into root's public folder:
+app.use(express.static(path.join(__dirname, "../public")));
