@@ -1,11 +1,24 @@
-require("dotenv").config(); // Must be at the very top
+require("dotenv").config();
 const mysql = require("mysql2/promise");
-
 const bcrypt = require("bcryptjs");
-const db = require("./config/db");
 
 async function seedDatabase() {
   try {
+    console.log("Connecting to Aiven MySQL database...");
+
+    // Establish connection with Aiven SSL configuration and parsed port
+    const db = await mysql.createConnection({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      port: parseInt(process.env.DB_PORT, 10),
+      ssl: {
+        rejectUnauthorized: false, // Required for Aiven cloud connection
+      },
+    });
+
+    console.log("Connected to Aiven MySQL successfully!");
     console.log("Starting database seed...");
 
     // 1. Create Department
@@ -75,6 +88,8 @@ async function seedDatabase() {
     console.log(
       "Database seeded successfully! You can now log in with admin@studentsahayak.online / admin123",
     );
+
+    await db.end();
     process.exit(0);
   } catch (error) {
     console.error("Error seeding database:", error);
