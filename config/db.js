@@ -1,13 +1,15 @@
 const mysql = require("mysql2/promise");
+require("dotenv").config();
 
+// Create a connection pool using cleaned environment variables and mandatory SSL
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD, // Uses environment variable safely
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 28591,
+  host: String(process.env.DB_HOST).trim(),
+  user: String(process.env.DB_USER).trim(),
+  password: String(process.env.DB_PASSWORD).trim(),
+  database: String(process.env.DB_NAME).trim(),
+  port: parseInt(String(process.env.DB_PORT).trim(), 10),
   ssl: {
-    rejectUnauthorized: false,
+    rejectUnauthorized: false, // Required by Aiven to accept the connection
   },
   waitForConnections: true,
   connectionLimit: 10,
