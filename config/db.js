@@ -5,7 +5,7 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD, // Uses environment variable safely
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 28595,
+  port: process.env.DB_PORT || 28591,
   ssl: {
     rejectUnauthorized: false,
   },
