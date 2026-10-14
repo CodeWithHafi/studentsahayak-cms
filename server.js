@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -16,7 +17,7 @@ app.use(
 );
 
 // Serve static assets (CSS, images, admin dashboard UI)
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Secure Server-Side Sessions
 app.use(
@@ -34,7 +35,7 @@ app.use(
 
 // Configure EJS as the templating engine
 app.set("view engine", "ejs");
-app.set("views", "./templates");
+app.set("views", path.join(__dirname, "templates"));
 
 // Import Routes and Controllers
 const authRoutes = require("./routes/authRoutes");
@@ -56,17 +57,16 @@ app.use("/api/users", userRoutes);
 app.get("/preview/article/:id", previewArticle);
 app.get("/preview/chapter/:id", previewChapter);
 
+// Serve the admin dashboard HTML on /admin
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin", "index.html"));
+});
+
 // Health Check Endpoint
 app.get("/api/health", (req, res) => {
   res
     .status(200)
     .json({ status: "Student Sahayak CMS API is running securely." });
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`CMS Backend initializing on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV}`);
 });
 
 // Only listen on a port if we are running locally (not on Vercel)
@@ -76,3 +76,6 @@ if (process.env.NODE_ENV !== "production") {
     console.log(`Server running locally on port ${PORT}`);
   });
 }
+
+// CRITICAL FOR VERCEL: Export the app instance
+module.exports = app;
