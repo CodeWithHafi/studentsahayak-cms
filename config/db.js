@@ -1,7 +1,7 @@
 const mysql = require("mysql2/promise");
 require("dotenv").config();
 
-// Create a connection pool using cleaned environment variables and mandatory SSL
+// Enforce strict type conversions, trim hidden whitespace, and require SSL
 const pool = mysql.createPool({
   host: String(process.env.DB_HOST).trim(),
   user: String(process.env.DB_USER).trim(),
@@ -9,11 +9,22 @@ const pool = mysql.createPool({
   database: String(process.env.DB_NAME).trim(),
   port: parseInt(String(process.env.DB_PORT).trim(), 10),
   ssl: {
-    rejectUnauthorized: false, // Required by Aiven to accept the connection
+    rejectUnauthorized: false,
   },
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
+
+// Test the connection immediately on startup
+pool
+  .getConnection()
+  .then((connection) => {
+    console.log("Successfully connected to Aiven database on Vercel!");
+    connection.release();
+  })
+  .catch((err) => {
+    console.error("Vercel Database Connection Error:", err);
+  });
 
 module.exports = pool;
