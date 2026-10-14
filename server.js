@@ -5,9 +5,9 @@ const path = require("path");
 require("dotenv").config();
 
 const app = express();
-
-// Security and Parsing Middlewares
-app.use(express.json());
+(app.set("trust proxy", 1),
+  // Security and Parsing Middlewares
+  app.use(express.json()));
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
