@@ -5,6 +5,7 @@ const {
   getMediaLibrary,
 } = require("../controllers/mediaController");
 
+// Mount upload and media library endpoints
 router.post("/upload", uploadMedia);
 router.get("/", getMediaLibrary);
 
