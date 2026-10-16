@@ -1,5 +1,94 @@
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const { Readable } = require("stream");
 const bcrypt = require("bcryptjs");
 const db = require("../config/db");
+// Configure Cloudinary using environment variables
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Configure Multer in-memory storage (RAM) for Vercel compatibility
+
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit for avatar
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed."));
+    }
+  },
+}).single("avatar");
+
+// Upload or Replace Profile Picture
+const updateProfilePicture = (req, res) => {
+  if (!req.session || !req.session.userId) {
+    return res.status(401).json({ error: "Unauthorized access." });
+  }
+
+  upload(req, res, async (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file)
+      return res.status(400).json({ error: "No image file provided." });
+
+    try {
+      const uploadToCloudinary = () => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "studentsahayak_avatars" },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result);
+            },
+          );
+          Readable.from(req.file.buffer).pipe(stream);
+        });
+      };
+
+      const result = await uploadToCloudinary();
+      const imageUrl = result.secure_url;
+
+      await db.query("UPDATE users SET profile_picture_url = ? WHERE id = ?", [
+        imageUrl,
+        req.session.userId,
+      ]);
+
+      return res.status(200).json({
+        message: "Profile picture updated successfully.",
+        profile_picture_url: imageUrl,
+      });
+    } catch (error) {
+      console.error("Avatar Upload Error:", error);
+      return res
+        .status(500)
+        .json({ error: "Failed to upload profile picture." });
+    }
+  });
+};
+
+// Remove Profile Picture
+const removeProfilePicture = async (req, res) => {
+  if (!req.session || !req.session.userId) {
+    return res.status(401).json({ error: "Unauthorized access." });
+  }
+
+  try {
+    await db.query("UPDATE users SET profile_picture_url = NULL WHERE id = ?", [
+      req.session.userId,
+    ]);
+    return res
+      .status(200)
+      .json({ message: "Profile picture removed successfully." });
+  } catch (error) {
+    console.error("Remove Avatar Error:", error);
+    return res.status(500).json({ error: "Failed to remove profile picture." });
+  }
+};
 
 // 1. Fetch the logged-in user's profile (Self-Service)
 const getMyProfile = async (req, res) => {
@@ -123,4 +212,11 @@ const createUser = async (req, res) => {
   }
 };
 
-module.exports = { getMyProfile, updateMyPassword, getAllUsers, createUser };
+module.exports = {
+  getMyProfile,
+  updateMyPassword,
+  getAllUsers,
+  createUser,
+  updateProfilePicture,
+  removeProfilePicture,
+};

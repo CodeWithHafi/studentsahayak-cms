@@ -3,6 +3,8 @@ const router = express.Router();
 const {
   getMyProfile,
   updateMyPassword,
+  updateProfilePicture,
+  removeProfilePicture,
   getAllUsers,
   createUser,
 } = require("../controllers/userController");
@@ -11,6 +13,8 @@ const { checkRole } = require("../middleware/rbac");
 // Self-service profile routes (Any logged-in user)
 router.get("/profile", getMyProfile);
 router.put("/password", updateMyPassword);
+router.post("/profile-picture", updateProfilePicture);
+router.delete("/profile-picture", removeProfilePicture);
 
 // Admin-only User Management routes (Strictly CEO & Manager)
 router.get("/", checkRole(["CEO", "Manager"]), getAllUsers);
