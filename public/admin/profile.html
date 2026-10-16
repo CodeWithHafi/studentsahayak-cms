@@ -516,6 +516,7 @@
             });
             const data = await res.json();
             if (res.ok) {
+              alert("Profile picture updated successfully!");
               loadProfile();
             } else {
               alert(data.error || "Failed to upload picture.");

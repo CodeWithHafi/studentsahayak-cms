@@ -96,12 +96,20 @@ const getMyProfile = async (req, res) => {
     return res.status(401).json({ error: "Unauthorized." });
 
   try {
-    const [rows] = await db.query(
-      `SELECT u.id, u.first_name, u.last_name, u.email, u.created_at, r.role_name, d.name AS department_name
-             FROM users u
-             LEFT JOIN roles r ON u.role_id = r.id
-             LEFT JOIN departments d ON u.department_id = d.id
-             WHERE u.id = ?`,
+    const [users] = await db.query(
+      `SELECT 
+          u.id, 
+          u.first_name, 
+          u.last_name, 
+          u.email, 
+          u.created_at, 
+          u.profile_picture_url,  /* ADD THIS LINE */
+          r.role_name,
+          d.department_name
+       FROM users u
+       LEFT JOIN roles r ON u.role_id = r.id
+       LEFT JOIN departments d ON u.department_id = d.id
+       WHERE u.id = ?`,
       [req.session.userId],
     );
 
