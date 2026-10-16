@@ -116,4 +116,28 @@ const getMediaLibrary = async (req, res) => {
   }
 };
 
-module.exports = { uploadMedia, getMediaLibrary };
+const deleteMedia = async (req, res) => {
+  if (!req.session || !req.session.userId) {
+    return res.status(401).json({ error: "Unauthorized access." });
+  }
+
+  const mediaId = req.params.id;
+
+  try {
+    // Delete the record from your Aiven MySQL database
+    const [result] = await db.query(`DELETE FROM media_assets WHERE id = ?`, [
+      mediaId,
+    ]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Media file not found." });
+    }
+
+    return res.status(200).json({ message: "Media deleted successfully." });
+  } catch (error) {
+    console.error("Delete Media Error:", error);
+    return res.status(500).json({ error: "Failed to delete media file." });
+  }
+};
+
+module.exports = { uploadMedia, getMediaLibrary, deleteMedia };
