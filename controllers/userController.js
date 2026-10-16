@@ -212,11 +212,78 @@ const createUser = async (req, res) => {
   }
 };
 
+// Update User (CEO & Manager)
+const updateUser = async (req, res) => {
+  if (!req.session || !req.session.userId) {
+    return res.status(401).json({ error: "Unauthorized access." });
+  }
+
+  const { first_name, last_name, email, role_name } = req.body;
+  const targetUserId = req.params.id;
+
+  try {
+    // Look up the role_id for the given role_name
+    const [roles] = await db.query("SELECT id FROM roles WHERE role_name = ?", [
+      role_name,
+    ]);
+    if (roles.length === 0)
+      return res.status(400).json({ error: "Invalid role selected." });
+
+    const role_id = roles[0].id;
+
+    await db.query(
+      `UPDATE users SET first_name = ?, last_name = ?, email = ?, role_id = ? WHERE id = ?`,
+      [first_name, last_name, email, role_id, targetUserId],
+    );
+
+    return res.status(200).json({ message: "User updated successfully." });
+  } catch (error) {
+    console.error("Update User Error:", error);
+    return res.status(500).json({ error: "Failed to update user." });
+  }
+};
+
+// Delete User (CEO Only)
+const deleteUser = async (req, res) => {
+  if (!req.session || !req.session.userId) {
+    return res.status(401).json({ error: "Unauthorized access." });
+  }
+
+  try {
+    // SECURITY CHECK: Verify the requester is actually a CEO
+    const [requester] = await db.query(
+      `SELECT r.role_name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?`,
+      [req.session.userId],
+    );
+
+    if (requester.length === 0 || requester[0].role_name !== "CEO") {
+      return res
+        .status(403)
+        .json({ error: "Forbidden: Only the CEO can delete accounts." });
+    }
+
+    // Prevent the CEO from deleting themselves
+    if (parseInt(req.params.id) === req.session.userId) {
+      return res
+        .status(400)
+        .json({ error: "You cannot delete your own account." });
+    }
+
+    await db.query("DELETE FROM users WHERE id = ?", [req.params.id]);
+    return res.status(200).json({ message: "User deleted successfully." });
+  } catch (error) {
+    console.error("Delete User Error:", error);
+    return res.status(500).json({ error: "Failed to delete user." });
+  }
+};
+
 module.exports = {
   getMyProfile,
   updateMyPassword,
   getAllUsers,
   createUser,
+  updateUser,
+  deleteUser,
   updateProfilePicture,
   removeProfilePicture,
 };

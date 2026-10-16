@@ -28,7 +28,6 @@
         overflow: hidden;
       }
 
-      /* Unified Sidebar */
       .sidebar {
         width: 260px;
         background: white;
@@ -79,16 +78,7 @@
         display: flex;
         align-items: center;
       }
-      .logout-btn i {
-        width: 24px;
-        font-size: 1.1rem;
-        margin-right: 8px;
-      }
-      .logout-btn:hover {
-        background: #fdf0f0;
-      }
 
-      /* Unified Main Content */
       .main-wrapper {
         flex: 1;
         display: flex;
@@ -113,7 +103,6 @@
         gap: 2rem;
       }
 
-      /* Page Specific */
       .card {
         background: white;
         padding: 2rem;
@@ -146,6 +135,26 @@
         font-weight: bold;
         cursor: pointer;
       }
+
+      /* Action Buttons */
+      .btn-sm {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        margin-right: 0.5rem;
+      }
+      .btn-outline {
+        background: #e0f2f1;
+        color: var(--primary);
+      }
+      .btn-danger {
+        background: #ffebee;
+        color: #c62828;
+      }
+
       table {
         width: 100%;
         border-collapse: collapse;
@@ -175,10 +184,36 @@
         font-size: 0.8rem;
         font-weight: bold;
       }
+
+      /* Edit Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 500px;
+      }
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
     </style>
   </head>
   <body>
-    <!-- Standardized Sidebar -->
     <aside class="sidebar">
       <div class="brand"><i class="fa-solid fa-pen-nib"></i> CMS Admin</div>
       <div class="nav-menu">
@@ -227,7 +262,6 @@
     </aside>
 
     <div class="main-wrapper">
-      <!-- Standardized Topbar -->
       <header class="topbar">
         <h2>Manage Users</h2>
         <div style="font-weight: 600">
@@ -245,12 +279,12 @@
               style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem"
             >
               <div class="form-group">
-                <label>First Name</label
-                ><input type="text" id="firstName" required />
+                <label>First Name</label>
+                <input type="text" id="firstName" required />
               </div>
               <div class="form-group">
-                <label>Last Name</label
-                ><input type="text" id="lastName" required />
+                <label>Last Name</label>
+                <input type="text" id="lastName" required />
               </div>
             </div>
             <div
@@ -261,11 +295,12 @@
               "
             >
               <div class="form-group">
-                <label>Email</label><input type="email" id="email" required />
+                <label>Email</label>
+                <input type="email" id="email" required />
               </div>
               <div class="form-group">
-                <label>Temporary Password</label
-                ><input
+                <label>Temporary Password</label>
+                <input
                   type="text"
                   id="tempPassword"
                   required
@@ -310,11 +345,13 @@
                 <th>Email</th>
                 <th>Role</th>
                 <th>Joined</th>
+                <th>Actions</th>
+                <!-- NEW COLUMN -->
               </tr>
             </thead>
             <tbody id="userTableBody">
               <tr>
-                <td colspan="4" style="text-align: center">Loading...</td>
+                <td colspan="5" style="text-align: center">Loading...</td>
               </tr>
             </tbody>
           </table>
@@ -322,12 +359,71 @@
       </main>
     </div>
 
-    <!-- Standardized JS Block -->
+    <!-- Edit User Modal -->
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <h3 style="color: var(--primary); margin-bottom: 1rem">
+          Edit Employee Profile
+        </h3>
+        <form id="editUserForm">
+          <input type="hidden" id="editUserId" />
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" id="editFirstName" required />
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" id="editLastName" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="editEmail" required />
+          </div>
+          <div class="form-group">
+            <label>Role</label>
+            <select id="editRoleName" required>
+              <option value="Article Writer">Article Writer</option>
+              <option value="Educational Content Writer">
+                Educational Content Writer
+              </option>
+              <option value="Proofreader">Proofreader</option>
+              <option value="Content Manager & Editor">
+                Content Manager & Editor
+              </option>
+              <option value="Manager">Manager</option>
+              <option value="CEO">CEO</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-sm btn-outline"
+              onclick="closeEditModal()"
+              style="padding: 0.6rem 1.2rem"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn-submit"
+              id="saveEditBtn"
+              style="width: auto"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script>
       const user = JSON.parse(localStorage.getItem("cms_user"));
       if (!user) window.location.href = "/admin/index.html";
       document.getElementById("userName").textContent = user.first_name;
 
+      // Restrict page to Manager & CEO
       if (!["CEO", "Manager"].includes(user.role_name))
         window.location.href = "/admin/dashboard.html";
 
@@ -366,27 +462,42 @@
           window.location.href = "/admin/index.html";
         });
 
-      /* Page Specific JS */
+      let allUsers = []; // Global state to hold user data for editing
+
+      /* Fetch & Render Users */
       async function fetchUsers() {
         try {
           const res = await fetch("/api/users", { credentials: "include" });
-          const users = await res.json();
+          allUsers = await res.json();
           const tbody = document.getElementById("userTableBody");
           tbody.innerHTML = "";
-          users.forEach((u) => {
+
+          allUsers.forEach((u) => {
+            // Role-based UI rendering
+            const isCEO = user.role_name === "CEO";
+            const deleteHtml = isCEO
+              ? `<button class="btn-sm btn-danger" onclick="deleteUser(${u.id})">Delete</button>`
+              : "";
+            const editHtml = `<button class="btn-sm btn-outline" onclick="openEditModal(${u.id})">Edit</button>`;
+
             tbody.innerHTML += `<tr>
                 <td><strong>${u.first_name} ${u.last_name}</strong></td>
                 <td>${u.email}</td>
                 <td><span class="badge">${u.role_name}</span></td>
                 <td>${new Date(u.created_at).toLocaleDateString()}</td>
+                <td>
+                  ${editHtml}
+                  ${deleteHtml}
+                </td>
             </tr>`;
           });
         } catch (err) {
           document.getElementById("userTableBody").innerHTML =
-            '<tr><td colspan="4" style="color:red; text-align:center;">Failed to load users</td></tr>';
+            '<tr><td colspan="5" style="color:red; text-align:center;">Failed to load users</td></tr>';
         }
       }
 
+      /* Create User */
       document
         .getElementById("addUserForm")
         .addEventListener("submit", async (e) => {
@@ -427,6 +538,89 @@
           btn.disabled = false;
         });
 
+      /* Edit User Functions */
+      function openEditModal(userId) {
+        const targetUser = allUsers.find((u) => u.id === userId);
+        if (!targetUser) return;
+
+        document.getElementById("editUserId").value = targetUser.id;
+        document.getElementById("editFirstName").value = targetUser.first_name;
+        document.getElementById("editLastName").value = targetUser.last_name;
+        document.getElementById("editEmail").value = targetUser.email;
+        document.getElementById("editRoleName").value = targetUser.role_name;
+
+        document.getElementById("editModal").style.display = "flex";
+      }
+
+      function closeEditModal() {
+        document.getElementById("editModal").style.display = "none";
+      }
+
+      document
+        .getElementById("editUserForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const userId = document.getElementById("editUserId").value;
+          const btn = document.getElementById("saveEditBtn");
+          btn.disabled = true;
+          btn.textContent = "Saving...";
+
+          const payload = {
+            first_name: document.getElementById("editFirstName").value,
+            last_name: document.getElementById("editLastName").value,
+            email: document.getElementById("editEmail").value,
+            role_name: document.getElementById("editRoleName").value,
+          };
+
+          try {
+            const res = await fetch(`/api/users/${userId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+              credentials: "include",
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+              closeEditModal();
+              fetchUsers();
+            } else {
+              alert(data.error || "Failed to update user.");
+            }
+          } catch (err) {
+            alert("Network error.");
+          }
+          btn.disabled = false;
+          btn.textContent = "Save Changes";
+        });
+
+      /* Delete User */
+      async function deleteUser(userId) {
+        if (
+          !confirm(
+            "Are you sure you want to permanently delete this user account?",
+          )
+        )
+          return;
+
+        try {
+          const res = await fetch(`/api/users/${userId}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          const data = await res.json();
+
+          if (res.ok) {
+            fetchUsers();
+          } else {
+            alert(data.error || "Failed to delete user.");
+          }
+        } catch (err) {
+          alert("Network error.");
+        }
+      }
+
+      // Initialize
       fetchUsers();
     </script>
   </body>

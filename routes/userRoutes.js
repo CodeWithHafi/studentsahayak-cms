@@ -7,6 +7,8 @@ const {
   removeProfilePicture,
   getAllUsers,
   createUser,
+  updateUser,
+  deleteUser,
 } = require("../controllers/userController");
 const { checkRole } = require("../middleware/rbac");
 
@@ -15,6 +17,8 @@ router.get("/profile", getMyProfile);
 router.put("/password", updateMyPassword);
 router.post("/profile-picture", updateProfilePicture);
 router.delete("/profile-picture", removeProfilePicture);
+router.put("/:id", updateUser);
+router.delete("/:id", deleteUser);
 
 // Admin-only User Management routes (Strictly CEO & Manager)
 router.get("/", checkRole(["CEO", "Manager"]), getAllUsers);
