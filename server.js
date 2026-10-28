@@ -5,13 +5,35 @@ const path = require("path");
 require("dotenv").config();
 
 const app = express();
-(app.set("trust proxy", 1),
-  // Security and Parsing Middlewares
-  app.use(express.json()));
+
+// Required for secure session cookies on Vercel
+app.set("trust proxy", 1);
+
+// Security and Parsing Middlewares
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Configure CORS to allow both the CMS Admin and the Public Website
+const allowedOrigins = [
+  process.env.FRONTEND_URL, // Your CMS admin URL from Vercel env
+  "https://studentsahayak.online", // Your public website
+  "https://www.studentsahayak.online", // Your public website (www variant)
+  "http://localhost:3000", // For local frontend testing
+  "http://localhost:5000", // For local backend testing
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like server-to-server or Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
@@ -56,6 +78,7 @@ app.use("/api/media", mediaRoutes);
 app.use("/api/users", userRoutes);
 app.get("/preview/article/:id", previewArticle);
 app.get("/preview/chapter/:id", previewChapter);
+app.use("/api/public", require("./routes/publicRoutes"));
 
 // Serve the admin dashboard HTML on /admin
 app.get("/admin", (req, res) => {
