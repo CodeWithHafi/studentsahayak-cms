@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 // Configure CORS to allow both the CMS Admin and the Public Website
 const allowedOrigins = [
   process.env.FRONTEND_URL, // Your CMS admin URL from Vercel env
+  "https://ems.studentsahayak.online",
   "https://studentsahayak.online", // Your public website
   "https://www.studentsahayak.online", // Your public website (www variant)
   "http://localhost:3000", // For local frontend testing
